@@ -46,18 +46,17 @@ Once installed, the plugin will be automatically updated by Kite when necessary.
 
 ### Configuring supported languages
 
-Kite supports Python (on by default), JavaScript (off by default), and Golang (off by default and in beta).
-
-To turn off Python, set the `g:kite_supported_languages` list in your vimrc:
+Kite supports 12 languages and counting.  By default only Python is enabled.  You can configure the languages for which Kite is enabled:
 
 ```viml
-let g:kite_supported_languages = []
-```
-
-To turn on JavaScript or Golang support, ensure the Kite Engine has JavaScript or Golang enabled and then set the `g:kite_supported_languages` list in your vimrc:
-
-```viml
+" Python, JavaScript, Go
 let g:kite_supported_languages = ['python', 'javascript', 'go']
+
+" All the languages Kite supports
+let g:kite_supported_languages = ['*']
+
+" Turn off Kite
+let g:kite_supported_languages = []
 ```
 
 [Learn more about why Kite is the best autocomplete for Vim.](https://kite.com/integrations/vim/)
@@ -80,6 +79,12 @@ let g:kite_auto_complete=0
 
 You can manually invoke the completions in insert mode with `<C-X><C-U>`.  See `:h i_CTRL-X_CTRL-U` for details.
 
+You can disable Kite's completions altogether with this in your vimrc:
+
+```viml
+let g:kite_completions=0
+```
+
 Kite's completions include snippets by default.  To opt out of the snippets, add this to your vimrc:
 
 ```viml
@@ -92,12 +97,22 @@ Normally you insert the currently selected completion option with `<C-y>`.  If y
 let g:kite_tab_complete=1
 ```
 
-Every time you enter a Python buffer the plugin updates `completeopt` as follows:
+For any kind of completion you must set 'completopt' as follows:
 
 ```viml
-set completeopt+=menuone   " show the popup menu even when there is only 1 match
-set completeopt+=noinsert  " don't insert any text until user chooses a match
-set completeopt-=longest   " don't insert the longest common text
+set completeopt+=menuone
+```
+
+For automatic completion, you also need either:
+
+```viml
+set completeopt+=noselect
+```
+
+or:
+
+```viml
+set completeopt+=noinsert
 ```
 
 To see documentation in the preview window for each completion option, copy all the lines above into your vimrc and change the preview line to:

@@ -1,20 +1,48 @@
 let s:languages_supported_by_kited = []
 
-" Returns true if the current buffer's language is supported by this plugin, false otherwise.
+" Returns true if we want Kite completions for the current buffer, false otherwise.
 function! kite#languages#supported_by_plugin()
-  if &filetype == 'python' && expand('%:e') != 'pyi' && index(g:kite_supported_languages, 'python') != -1
+  " Return false if the file extension is not recognised by kited.
+  let recognised_extensions = [
+        \ 'c',
+        \ 'cc',
+        \ 'cpp',
+        \ 'cs',
+        \ 'css',
+        \ 'go',
+        \ 'h',
+        \ 'hpp',
+        \ 'html',
+        \ 'java',
+        \ 'js',
+        \ 'jsx',
+        \ 'kt',
+        \ 'less',
+        \ 'm',
+        \ 'php',
+        \ 'py',
+        \ 'pyw',
+        \ 'rb',
+        \ 'scala',
+        \ 'sh',
+        \ 'ts',
+        \ 'tsx',
+        \ 'vue',
+        \ ]
+  if index(recognised_extensions, expand('%:e')) == -1
+    return 0
+  endif
+
+  if g:kite_supported_languages == ['*']
     return 1
   endif
 
-  if &filetype == 'go' && index(g:kite_supported_languages, 'go') != -1
-    return 1
+  " Return false if the buffer's language is not one for which we want Kite completions.
+  if index(g:kite_supported_languages, &filetype) == -1
+    return 0
   endif
 
-  if &filetype == 'javascript' && index(g:kite_supported_languages, 'javascript') != -1
-    return 1
-  endif
-
-  return 0
+  return 1
 endfunction
 
 
@@ -22,6 +50,7 @@ endfunction
 function! kite#languages#supported_by_kited()
   " Only check kited's languages once.
   if empty(s:languages_supported_by_kited)
+    " A list of language names, e.g. ['bash', 'c', 'javascript', 'ruby', ...]
     let s:languages_supported_by_kited = kite#client#languages(function('kite#languages#handler'))
   endif
 

@@ -11,6 +11,8 @@ let s:copilot_path       = 'kite://home'
 let s:counter_path       = '/clientapi/metrics/counters'
 let s:settings_path      = 'kite://settings'
 let s:permissions_path   = 'kite://settings/permissions'
+let s:max_file_size_path = '/clientapi/settings/max_file_size_kb'
+let s:codenav_path       = '/codenav/editor/related'
 
 
 function! kite#client#docs(word)
@@ -77,6 +79,23 @@ function! kite#client#languages(handler)
 endfunction
 
 
+" Returns max file size in bytes, or -1 if not available.
+function! kite#client#max_file_size()
+  let path = s:max_file_size_path
+  if has('channel')
+    let response = s:internal_http(path, g:kite_short_timeout)
+  else
+    let response = s:external_http(s:base_url.path, g:kite_short_timeout)
+  endif
+  let result = s:parse_response(response)
+  if result.status == 200
+    return result.body * 1024
+  else
+    return -1
+  endif
+endfunction
+
+
 function! kite#client#hover(filename, hash, cursor, handler)
   call s:wait_for_pending_events()
 
@@ -107,6 +126,18 @@ function! kite#client#completions(json, handler)
     call s:async(function('s:timer_post', [path, g:kite_long_timeout, a:json, a:handler]))
   else
     call kite#async#execute(s:external_http_cmd(s:base_url.path, g:kite_long_timeout, 1),
+          \ function('s:parse_and_handle', [a:handler]), a:json)
+  endif
+endfunction
+
+
+function! kite#client#request_related(json, handler)
+  let path = s:codenav_path 
+  let timeout = 10000 "10s
+  if has('channel')
+    call s:async(function('s:timer_post', [path, timeout, a:json, a:handler]))
+  else
+    call kite#async#execute(s:external_http_cmd(s:base_url.path, timeout, 1),
           \ function('s:parse_and_handle', [a:handler]), a:json)
   endif
 endfunction
