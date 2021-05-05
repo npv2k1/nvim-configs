@@ -1,4 +1,4 @@
-call plug#begin('~/.config/nvim/bundle')
+call plug#begin('C:/Users/nguyen/AppData/Local/nvim/bundle')
 
 "Plugin thay đổi giao diện cho status bar của Vim
 Plug 'vim-airline/vim-airline'

@@ -28,4 +28,4 @@ autocmd FileType py call tagbar#autoopen(0)
 "Phim tat trong nvim"
 
 nmap <F8> :TagbarToggle<CR>
-map <C-n> :NERDTreeToggle<CR>
+"map <C-n> :NERDTreeToggle<CR>"
